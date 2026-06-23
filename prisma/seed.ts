@@ -1,5 +1,8 @@
 import "dotenv/config";
+import bcrypt from "bcrypt";
 import { prisma } from "../app.js";
+
+const saltRounds = 10;
 
 const woods = [
   { name: "Épicéa", type: "softwood" as const, hardness: "tender" as const },
@@ -20,6 +23,8 @@ async function main() {
     });
   }
 
+  const hashedPassword = await bcrypt.hash("password123", saltRounds);
+
   await prisma.user.upsert({
     where: { email: "john.doe@test.com" },
     update: {},
@@ -27,7 +32,7 @@ async function main() {
       firstName: "John",
       lastName: "Doe",
       email: "john.doe@test.com",
-      password: "password123",
+      password: hashedPassword,
     },
   });
 

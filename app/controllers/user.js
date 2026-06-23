@@ -26,38 +26,6 @@ export const signup = async (req, res) => {
     }
 };
 
-export const login = async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        const user = await prisma.user.findUnique({
-            where: { email }
-        });
-
-        if (!user) {
-            return res.status(401).send({
-                message: 'Invalid credentials'
-            });
-        }
-
-        const isValidPassword = await bcrypt.compare(
-            password,
-            user.password
-        );
-
-        if (!isValidPassword) {
-            return res.status(401).send({
-                message: 'Invalid credentials'
-            });
-        }
-
-        res.status(200).send({
-            message: 'Login successful',
-            user
-        });
-    } catch (error) {
-        res.status(500).send({
-            message: error.message
-        });
-    }
+export const login = (req, res) => {
+    res.send('You are login');
 };
