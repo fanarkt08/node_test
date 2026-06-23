@@ -6,9 +6,9 @@ export const signup = async (req, res) => {
         const user = await prisma.user.create({
             data: { firstName, lastName, email, password }
         });
-        res.send(user);
+        res.status(201).send(user);
     } catch (error) {
-        res.send(error);
+        res.status(error.status || 500).send({ message: error.message || 'Internal server error' });
     }
 };
 
