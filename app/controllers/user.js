@@ -45,11 +45,17 @@ export const login = async (req, res) => {
             return res.status(401).send({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign(
-            { id: user.id, email: user.email },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
-        );
+        const token = await new Promise((resolve, reject) => {
+            jwt.sign(
+                { id: user.id, email: user.email },
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' },
+                (err, token) => {
+                    if (err) reject(err);
+                    else resolve(token);
+                }
+            );
+        });
 
         res.json({ token, user });
     } catch (error) {
