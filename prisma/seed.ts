@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import { prisma } from "../app.js";
 
 const saltRounds = 10;
-
 const woods = [
   { name: "Épicéa", type: "softwood" as const, hardness: "tender" as const },
   { name: "Pin", type: "softwood" as const, hardness: "medium_hard" as const },

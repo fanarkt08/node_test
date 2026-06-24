@@ -22,6 +22,7 @@ prisma.$connect()
 app.use(express.json());
 
 // Ajout des routes avant « export default app; »
+app.use('/uploads', express.static('uploads'));
 app.use("/api", router);
 
 
