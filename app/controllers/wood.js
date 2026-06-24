@@ -10,3 +10,18 @@ export const readAll = async (req, res) => {
         });
     }
 };
+
+export const readByHardness = async (req, res) => {
+    const { hardness } = req.params;
+
+    try {
+        const woods = await prisma.wood.findMany({
+            where: { hardness }
+        });
+        res.json(woods);
+    } catch (error) {
+        res.status(error.status || 500).send({
+            message: error.message || 'Internal server error'
+        });
+    }
+};
