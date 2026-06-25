@@ -1,0 +1,174 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Woods API",
+    "description": "API REST pour la gestion des essences de bois",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Serveur local"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Link": {
+        "type": "object",
+        "properties": {
+          "rel": { "type": "string", "example": "self" },
+          "method": { "type": "string", "example": "GET" },
+          "href": { "type": "string", "example": "http://localhost:5000/api/woods/1" }
+        }
+      },
+      "Wood": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "name": { "type": "string", "example": "Chêne" },
+          "type": {
+            "type": "string",
+            "enum": ["softwood", "exotic wood", "noble and hardwoods"],
+            "example": "noble and hardwoods"
+          },
+          "hardness": {
+            "type": "string",
+            "enum": ["tender", "medium hard", "hard"],
+            "example": "hard"
+          },
+          "image": { "type": "string", "nullable": true, "example": "http://localhost:5000/uploads/chene.jpg" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "links": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Link" },
+            "example": [
+              { "rel": "self", "method": "GET", "href": "http://localhost:5000/api/woods/1" },
+              { "rel": "sameHardness", "method": "GET", "href": "http://localhost:5000/api/woods/hard" }
+            ]
+          }
+        }
+      },
+      "WoodInput": {
+        "type": "object",
+        "required": ["name", "type", "hardness"],
+        "properties": {
+          "name": { "type": "string", "example": "Chêne" },
+          "type": {
+            "type": "string",
+            "enum": ["softwood", "exotic wood", "noble and hardwoods"],
+            "example": "noble and hardwoods"
+          },
+          "hardness": {
+            "type": "string",
+            "enum": ["tender", "medium hard", "hard"],
+            "example": "hard"
+          }
+        }
+      }
+    }
+  },
+  "security": [{ "bearerAuth": [] }],
+  "paths": {
+    "/woods": {
+      "get": {
+        "summary": "Récupérer toutes les essences de bois",
+        "tags": ["Woods"],
+        "responses": {
+          "200": {
+            "description": "Liste de toutes les essences",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Wood" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Erreur serveur" }
+        }
+      },
+      "post": {
+        "summary": "Créer une essence de bois",
+        "tags": ["Woods"],
+        "requestBody": {
+          "description": "Données de l'essence. Peut être envoyé en JSON ou en form-data (avec champ `datas` en JSON stringifié et `image` en fichier).",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/WoodInput" }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "datas": {
+                    "type": "string",
+                    "description": "JSON stringifié des données de l'essence",
+                    "example": "{\"name\":\"Chêne\",\"type\":\"noble and hardwoods\",\"hardness\":\"hard\"}"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Image de l'essence (optionnelle)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Essence créée",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Wood" }
+              }
+            }
+          },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    },
+    "/woods/{hardness}": {
+      "get": {
+        "summary": "Récupérer les essences par dureté",
+        "tags": ["Woods"],
+        "parameters": [
+          {
+            "name": "hardness",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["tender", "medium hard", "hard"]
+            },
+            "example": "hard"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liste des essences filtrées par dureté",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Wood" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Erreur serveur" }
+        }
+      }
+    }
+  }
+}

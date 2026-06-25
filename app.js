@@ -2,6 +2,8 @@ import { PrismaClient } from "./generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from "./swagger.json" with { type: "json" };
 import router from "./app/routes/index.js";
 
 const app = express();
@@ -25,6 +27,7 @@ app.use(express.json());
 
 // Ajout des routes avant « export default app; »
 app.use('/uploads', express.static('uploads'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api", router);
 
 
