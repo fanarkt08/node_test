@@ -1,6 +1,7 @@
 import { PrismaClient } from "./generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import express from 'express';
+import cors from 'cors';
 import router from "./app/routes/index.js";
 
 const app = express();
@@ -19,6 +20,7 @@ prisma.$connect()
     .then(() => console.log("Database connected..."))
     .catch((err) => console.log(err));
 
+app.use(cors({ origin: 'http://localhost:8080' }));
 app.use(express.json());
 
 // Ajout des routes avant « export default app; »
