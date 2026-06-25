@@ -19,6 +19,17 @@
         "bearerFormat": "JWT"
       }
     },
+    "parameters": {
+      "Authorization": {
+        "name": "Authorization",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "Bearer <token>"
+        }
+      }
+    },
     "schemas": {
       "Link": {
         "type": "object",
@@ -81,6 +92,9 @@
       "get": {
         "summary": "Récupérer toutes les essences de bois",
         "tags": ["Woods"],
+        "parameters": [
+          { "$ref": "#/components/parameters/Authorization" }
+        ],
         "responses": {
           "200": {
             "description": "Liste de toutes les essences",
@@ -99,13 +113,13 @@
       "post": {
         "summary": "Créer une essence de bois",
         "tags": ["Woods"],
+        "parameters": [
+          { "$ref": "#/components/parameters/Authorization" }
+        ],
         "requestBody": {
           "description": "Données de l'essence. Peut être envoyé en JSON ou en form-data (avec champ `datas` en JSON stringifié et `image` en fichier).",
           "required": true,
           "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/WoodInput" }
-            },
             "multipart/form-data": {
               "schema": {
                 "type": "object",
@@ -122,6 +136,9 @@
                   }
                 }
               }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/WoodInput" }
             }
           }
         },
@@ -143,6 +160,7 @@
         "summary": "Récupérer les essences par dureté",
         "tags": ["Woods"],
         "parameters": [
+          { "$ref": "#/components/parameters/Authorization" },
           {
             "name": "hardness",
             "in": "path",
